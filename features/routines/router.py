@@ -17,3 +17,8 @@ def create_routine(payload: RoutineCreate) -> RoutineRead:
     appends a new routine object to a list in repository and returns the created routine.
     """
     return controller.create_routine(payload)
+
+
+@router.get("/{id}", response_model=RoutineRead)
+def get_routine(id: int) -> RoutineRead:
+    return controller.get_routine(id)
