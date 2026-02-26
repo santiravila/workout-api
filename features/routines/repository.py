@@ -16,9 +16,9 @@ def save(routine: Routine) -> Routine:
     return routine
 
 
-def get_by_id(id: int):
+def get_by_id(routine_id: int) -> Routine:
     for routine in _ROUTINES:
-        if routine.id == id:
+        if routine.id == routine_id:
             return routine
     
-    raise ValueError(f"Routine with id={id} not found")
+    raise ValueError(f"Not found")

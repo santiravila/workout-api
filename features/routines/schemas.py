@@ -15,3 +15,11 @@ class RoutineCreate(RoutineBase):
 
 class RoutineRead(RoutineBase):
     id: int 
+
+
+class RoutineExercise(BaseModel):
+    name: str
+    sets: int
+    reps: int | None = None
+    weight: float | None = None
+    duration: int | None = None

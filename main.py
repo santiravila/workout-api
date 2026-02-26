@@ -6,6 +6,6 @@ app = FastAPI()
 @app.get("/")
 def root():
     return "This is the root"
-
+    
 
 app.include_router(routines_router)

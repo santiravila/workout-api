@@ -4,7 +4,7 @@
 
 | Model Name | Inherits From | Fields | Purpose | Validation/Rules |
 | :--- | :--- | :--- | :--- | :--- |
-| Exercise | BaseModel | name: (str, **required**), sets: (int, **required**), reps: (int, **optional**), weight: (float, kg/lb, **optional**),  duration: (int, seconds, **optional**), | Bundle exercise data and work as an aggregate inside Routines and Sessions | either reps or duration should be used, but neither both or none. sets > 0, reps >= 0 (if selected), duration >= 0 (if selected), name only composed of (a-z, A-Z, _, -, space) |
+| Exercise | BaseModel | name: (str, **required**), sets: (int, **required**), reps: (int, **optional**), weight: (float, kg/lb, **optional**),  duration: (int, seconds, **optional**), | Bundle exercise data and work as a Value Object inside Routines and Sessions aggregate roots | either reps or duration should be used, but neither both or none. sets > 0, reps >= 0 (if selected), duration >= 0 (if selected), name only composed of (a-z, A-Z, _, -, space) |
 | RoutineBase | BaseModel | name: (str, **required**), exercises: (list[Exercise], **required**), rest_between_sets: (int, seconds **required**), tempo: (str, **optional**) | Shared fields | name only composed of (a-z, A-Z, _, -, space), tempo is formatted as (a-b-c-d where a,b,c, and d are (1-9)) |
 | RoutineCreate | RoutineBase | empty for now | Create a new routine | none for now |
 | RoutineRead | RoutineBase | id: (int), created_at: (datetime) | Return the routine to the client | id > 0 |
