@@ -22,3 +22,8 @@ def create_routine(payload: RoutineCreate) -> RoutineRead:
 @router.get("/{id}", response_model=RoutineRead)
 def get_routine(id: int) -> RoutineRead:
     return controller.get_routine(id)
+
+
+@router.get("/", response_model=list[RoutineRead])
+def get_routines() -> list[RoutineRead]:
+    return controller.list_routines_controller()

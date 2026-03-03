@@ -1,8 +1,9 @@
 from fastapi import HTTPException, status
 from features.routines.domain import Routine
-from features.routines.repository import save, get_by_id
+from features.routines.repository import RoutineRepository
 from features.routines.schemas import RoutineCreate, RoutineRead
 
+repo = RoutineRepository()
 
 class RoutineController:
     def __init__(self):
@@ -13,30 +14,26 @@ class RoutineController:
             name=data.name
         )
 
-        saved = save(routine)
+        saved = repo.save(routine)
 
-        # DOES NOT FEEL RIGHT HERE. Controller is supposed to translate app to HTTP, raises ValueError but HTTP exception is not handled
-        if saved.id is None:
-            raise ValueError
-        
-        return RoutineRead(
-            name=saved.name,
-            id=saved.id
-        )
+        return RoutineRead.from_domain(saved)
+    
     
     def get_routine(self, routine_id: int) -> RoutineRead:
         try:
-            routine = get_by_id(routine_id)
+            routine = repo.get_by_id(routine_id)
         except ValueError:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {id}")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")
 
-        assert routine.id is not None, "DB returned a routine without an ID"
-
-        return RoutineRead(
-            name=routine.name,
-            id=routine.id
-        )
+        return RoutineRead.from_domain(routine)
 
 
+
+    def list_routines_controller(self) -> list[RoutineRead]:
+        try:
+            routines = repo.list_routines()
+        except ValueError:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"No saved routines")
         
-    
+        return [RoutineRead.from_domain(routine) for routine in routines]
+

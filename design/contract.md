@@ -20,3 +20,7 @@
 | Create a Routine | POST | /routines | RoutineCreate | RoutineRead | Write a new entry to the JSON storing the routines based on the Request Body, validate it fits the RoutineCreate model including the list of exercises |
 | Update a Routine | PUT | /routines/{routine_id} | RoutineCreate | RoutineRead | Replace the whole Routine with the corrections added |
 | Delete a Routine | DELETE | /routines/{routine_id} | None | RoutineRead | Delete a routine by ID | 
+
+Get All Routines (GET /routines - returns a list)
+Update a Routine (PUT or PATCH /routines/{routine_id})
+Delete a Routine (DELETE /routines/{routine_id})
