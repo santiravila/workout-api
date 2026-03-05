@@ -10,9 +10,9 @@ controller = RoutineController()
 @router.post("/", response_model=RoutineRead)
 def create_routine(payload: RoutineCreate) -> RoutineRead:
     """
-    params: input routine as RoutineCreate DTO
+    params: input routine as RoutineCreate Request Body
 
-    return: RoutineRead DTO 
+    return: RoutineRead Response Body 
     
     appends a new routine object to a list in repository and returns the created routine.
     """
