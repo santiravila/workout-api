@@ -11,7 +11,10 @@ class RoutineBase(BaseModel):
 
 
 class RoutineCreate(RoutineBase):
-    pass
+    def to_domain(self) -> Routine:
+        return Routine(
+            name=self.name
+        )
 
 
 class RoutineRead(RoutineBase):
@@ -31,7 +34,7 @@ class RoutineRead(RoutineBase):
 class RoutineUpdate(BaseModel):
     name: str | None = None
 
-
+    
 class RoutineExercise(BaseModel):
     name: str
     sets: int
