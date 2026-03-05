@@ -4,7 +4,7 @@ from features.routines.domain import Routine
 _ROUTINES: list[Routine] = []
 next_id = 1
 
-# consider creating a RoutineRepository class for encapsulating related functionality
+
 class RoutineRepository:
     def save(self, routine: Routine) -> Routine:
         global next_id
@@ -26,7 +26,5 @@ class RoutineRepository:
 
 
     def list_routines(self) -> list[Routine]:
-        if _ROUTINES:
-            return _ROUTINES
+        return _ROUTINES
         
-        raise ValueError(f"No saved routines")

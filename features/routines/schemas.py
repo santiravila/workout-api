@@ -1,6 +1,6 @@
 from typing import Self
 from pydantic import BaseModel
-from domain import Routine
+from features.routines.domain import Routine
 
 
 class RoutineBase(BaseModel):
@@ -26,6 +26,10 @@ class RoutineRead(RoutineBase):
             name=routine.name,
             id=routine.id
         )
+
+
+class RoutineUpdate(BaseModel):
+    name: str | None = None
 
 
 class RoutineExercise(BaseModel):
