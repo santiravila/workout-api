@@ -14,14 +14,14 @@ class RoutineController:
             name=data.name
         )
 
-        saved = repo.save(routine)
+        saved = repo.save_routine(routine)
 
         return RoutineRead.from_domain(saved)
     
     
     def get_routine(self, routine_id: int) -> RoutineRead:
         try:
-            routine = repo.get_by_id(routine_id)
+            routine = repo.get_routine_by_id(routine_id)
         except ValueError:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")
 
@@ -37,7 +37,7 @@ class RoutineController:
 
     def update_routine(self, routine_id: int, payload: RoutineUpdate) -> RoutineRead:
         try:
-            routine = repo.get_by_id(routine_id)
+            routine = repo.get_routine_by_id(routine_id)
         except ValueError:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")
         
@@ -45,3 +45,10 @@ class RoutineController:
         for key_name in update_data:
             setattr(routine, key_name, update_data[key_name])
         return RoutineRead.from_domain(routine)
+    
+
+    def delete_routine(self, routine_id: int) -> RoutineRead:
+        try:
+            return RoutineRead.from_domain(repo.remove_routine(routine_id))
+        except ValueError:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")

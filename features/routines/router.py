@@ -32,3 +32,8 @@ def get_routines() -> list[RoutineRead]:
 @router.patch("/{id}", response_model=RoutineRead)
 def update_routine(id: int, payload: RoutineUpdate) -> RoutineRead:
     return controller.update_routine(id, payload)
+
+
+@router.delete("/{id}", response_model=RoutineRead)
+def delete_routine(id: int) -> RoutineRead:
+    return controller.delete_routine(id)

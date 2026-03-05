@@ -6,7 +6,7 @@ next_id = 1
 
 
 class RoutineRepository:
-    def save(self, routine: Routine) -> Routine:
+    def save_routine(self, routine: Routine) -> Routine:
         global next_id
 
         routine.id = next_id
@@ -17,7 +17,7 @@ class RoutineRepository:
         return routine
 
 
-    def get_by_id(self, routine_id: int) -> Routine:
+    def get_routine_by_id(self, routine_id: int) -> Routine:
         for routine in _ROUTINES:
             if routine.id == routine_id:
                 return routine
@@ -28,3 +28,10 @@ class RoutineRepository:
     def list_routines(self) -> list[Routine]:
         return _ROUTINES
         
+    
+    def remove_routine(self, routine_id: int) -> Routine:
+        for index, routine in enumerate(_ROUTINES):
+            if routine.id == routine_id:
+                return _ROUTINES.pop(index)
+        
+        raise ValueError(f"Not found")
