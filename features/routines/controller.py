@@ -1,5 +1,4 @@
 from fastapi import HTTPException, status
-from features.routines.domain import Routine
 from features.routines.repository import RoutineRepository
 from features.routines.schemas import RoutineCreate, RoutineRead, RoutineUpdate
 
@@ -8,7 +7,6 @@ class RoutineController:
     def __init__(self, repo: RoutineRepository):
         self.repo = repo
         
-
     def create_routine(self, payload: RoutineCreate) -> RoutineRead:
         routine = payload.to_domain()
         saved = self.repo.save_routine(routine)

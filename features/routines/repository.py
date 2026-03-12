@@ -48,7 +48,9 @@ class RoutineRepository:
     def save_routine(self, routine: Routine) -> Routine:
         routines = self._load()
         greatest_id = max([r.id for r in routines if r.id is not None], default=0)
-        
+        for index, exercise in enumerate(routine.exercises, start = 1):
+            exercise.id = index
+
         routine.id = greatest_id + 1
         routines.append(routine)
         self._save(routines)
