@@ -1,19 +1,20 @@
 from fastapi import HTTPException, status
-from features.routines.repository import RoutineRepository
-from features.routines.schemas import RoutineCreate, RoutineRead, RoutineUpdate
+from features.sessions.repository import SessionRepository
+from features.sessions.schemas import SessionCreate, SessionRead, SessionUpdate
 
 
-class RoutineController:
-    def __init__(self, repo: RoutineRepository):
+class SessionController:
+    def __init__(self, repo: SessionRepository):
         self.repo = repo
         
-    def create_routine(self, payload: RoutineCreate) -> RoutineRead:
-        routine = payload.to_domain()
-        saved = self.repo.save_routine(routine)
+    def create_session(self, payload: SessionCreate) -> SessionRead:
+        session = payload.to_domain()
+        saved = self.repo.save_session(session)
 
-        return RoutineRead.from_domain(saved)
+        return SessionRead.from_domain(saved)
+
     
-    
+    """ 
     def get_routine(self, routine_id: int) -> RoutineRead:
         try:
             routine = self.repo.get_routine_by_id(routine_id)
@@ -49,3 +50,4 @@ class RoutineController:
             return RoutineRead.from_domain(self.repo.remove_routine(routine_id))
         except ValueError:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")
+    """
