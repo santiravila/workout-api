@@ -28,6 +28,7 @@ class ExerciseRead(ExerciseBase):
 class SessionBase(BaseModel):
     routine_id: int
     routine_name: str
+    exercises: list[ExerciseBase]
 
 
 class SessionCreate(SessionBase):
@@ -48,10 +49,9 @@ class SessionRead(SessionBase):
 
     @classmethod
     def from_domain(cls, session: Session) -> Self:
-        if session.session_id is None:
-            raise  ValueError("Session must be persisted before mapping")
+        assert session.session_id is not None, "Session must be persisted before mapping"
 
-        return cls(
+        return cls( 
             routine_id=session.routine_id,
             routine_name=session.routine_name,
             exercises=[ExerciseRead.from_domain(exercise) for exercise in session.exercises],
@@ -61,4 +61,6 @@ class SessionRead(SessionBase):
 
 
 class SessionUpdate(SessionBase):
-    ...
+    routine_id: int | None = None
+    routine_name: str | None = None
+    exercises: list[ExerciseBase] | None = None

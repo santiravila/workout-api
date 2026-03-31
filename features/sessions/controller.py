@@ -14,40 +14,45 @@ class SessionController:
         return SessionRead.from_domain(saved)
 
     
-    """ 
-    def get_routine(self, routine_id: int) -> RoutineRead:
+    def get_session(self, session_id: int) -> SessionRead:
         try:
-            routine = self.repo.get_routine_by_id(routine_id)
+            session = self.repo.get_session_by_id(session_id=session_id)
         except ValueError:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, 
+                detail=f"Not an existing session of id: {session_id}"
+            )
 
-        return RoutineRead.from_domain(routine)
+        return SessionRead.from_domain(session)
 
-
-    def list_routines_controller(self) -> list[RoutineRead]:
-        routines = self.repo.list_routines()
+     
+    def list_sessions_controller(self) -> list[SessionRead]:
+        sessions = self.repo.list_sessions()
         
-        return [RoutineRead.from_domain(routine) for routine in routines]
+        return [SessionRead.from_domain(session) for session in sessions]
 
 
-    def update_routine(self, routine_id: int, payload: RoutineUpdate) -> RoutineRead:
+    def update_session(self, session_id: int, payload: SessionUpdate) -> SessionRead:
         try:
-            routine = self.repo.get_routine_by_id(routine_id)
+            session = self.repo.get_session_by_id(session_id)
         except ValueError:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND, 
+                detail=f"Not an existing session of id: {session_id}"
+            )
         
         update_data = payload.model_dump(exclude_unset=True)
-        for key, value in update_data.items():
-            setattr(routine, key, value)
         
-        self.repo.update_routine(routine)
+        session.apply_patch(update_data)
+        self.repo.update_session(session)
 
-        return RoutineRead.from_domain(routine)
+        return SessionRead.from_domain(session)
     
-
-    def delete_routine(self, routine_id: int) -> RoutineRead:
+    def delete_session(self, session_id: int) -> SessionRead:
         try:
-            return RoutineRead.from_domain(self.repo.remove_routine(routine_id))
+            return SessionRead.from_domain(self.repo.remove_session(session_id))
         except ValueError:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")
-    """
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND, 
+                detail=f"Not an existing session of id: {session_id}"
+            )

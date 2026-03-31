@@ -51,3 +51,12 @@ class Session:
             "date": self.date,
             "session_id": self.session_id,
         }
+
+    def apply_patch(self, data: dict) -> None:
+        for key, value in data.items():
+            if key == "exercises":
+                self.exercises = [
+                    Exercise.from_dict(ex) for ex in value
+                ]
+            else:
+                setattr(self, key, value)

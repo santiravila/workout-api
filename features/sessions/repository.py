@@ -34,7 +34,7 @@ class SessionRepository:
             return loaded_sessions
                 
 
-    def _save(self, sessions: list[Session]):
+    def _save(self, sessions: list[Session]) -> None:
         data = {
             "sessions": [session.to_dict() for session in sessions]
         }
@@ -46,10 +46,6 @@ class SessionRepository:
     def save_session(self, session: Session) -> Session:
         sessions = self._load()
         greatest_id = max([s.session_id for s in sessions if s.session_id is not None], default=0)
-
-        for exercise in session.exercises:
-            ...
-            #exercise.exercise_id = se 
 
         session.session_id = greatest_id + 1
         sessions.append(session)

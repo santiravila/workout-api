@@ -19,7 +19,6 @@ class ExerciseRead(ExerciseBase):
 
     @classmethod
     def from_domain(cls, exercise: Exercise) -> Self:
-
         assert exercise.exercise_id is not None, "Routine must be persisted before mapping"
 
         return cls(
@@ -49,8 +48,7 @@ class RoutineRead(RoutineBase):
 
     @classmethod
     def from_domain(cls, routine: Routine) -> Self:
-        if routine.routine_id is None:
-            raise ValueError("Routine must be persisted before mapping")
+        assert routine.routine_id is not None, "Routine must be persisted before mapping" 
         
         return cls(
             name=routine.name,
