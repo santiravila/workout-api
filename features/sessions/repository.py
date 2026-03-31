@@ -63,7 +63,17 @@ class SessionRepository:
         raise ValueError(f"Not found")
 
 
-    def list_sessions(self) -> list[Session]:
+    def list_sessions(self, routine_id: int | None = None, sort_by_date: bool = False, descending: bool = True) -> list[Session]:
+        sessions = self._load()
+        
+        # Filtering
+        if routine_id:
+            return [session for session in sessions if session.routine_id == routine_id]
+
+        # Sorting
+        if sort_by_date:
+            return sorted(sessions, key=lambda s: s.date, reverse=descending)
+
         return self._load()
 
 

@@ -34,9 +34,12 @@ def get_session(
 
 @router.get("/", response_model=list[SessionRead])
 def list_sessions(
-    controller: ControllerDep
+    controller: ControllerDep,
+    routine_id: int | None = None,
+    sort_by_date: bool = False,
+    descending: bool = True
 ) -> list[SessionRead]:
-    return controller.list_sessions_controller()
+    return controller.list_sessions_controller(routine_id, sort_by_date, descending)
 
 
 @router.patch("/{session_id}", response_model=SessionRead)

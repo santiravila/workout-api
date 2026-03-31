@@ -26,8 +26,8 @@ class SessionController:
         return SessionRead.from_domain(session)
 
      
-    def list_sessions_controller(self) -> list[SessionRead]:
-        sessions = self.repo.list_sessions()
+    def list_sessions_controller(self, routine_id: int | None = None, sort_by_date: bool = False, descending: bool = True) -> list[SessionRead]:
+        sessions = self.repo.list_sessions(routine_id, sort_by_date, descending)
         
         return [SessionRead.from_domain(session) for session in sessions]
 
