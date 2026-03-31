@@ -18,13 +18,6 @@ def create_routine(
     payload: RoutineCreate,
     controller: ControllerDep
 ) -> RoutineRead:
-    """
-    params: input routine as RoutineCreate Request Body
-
-    return: RoutineRead Response Body 
-    
-    appends a new routine object to a list in repository and returns the created routine.
-    """
     return controller.create_routine(payload)
 
 

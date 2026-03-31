@@ -1,6 +1,7 @@
-from features.routines.domain import Routine
-import json
 from pathlib import Path
+import json
+from features.routines.domain import Routine
+
 
 # __file__ is the absolute path to repository.py
 # .parent goes up one level to the /routines/ folder
@@ -47,11 +48,11 @@ class RoutineRepository:
 
     def save_routine(self, routine: Routine) -> Routine:
         routines = self._load()
-        greatest_id = max([r.id for r in routines if r.id is not None], default=0)
+        greatest_id = max([r.routine_id for r in routines if r.routine_id is not None], default=0)
         for index, exercise in enumerate(routine.exercises, start = 1):
-            exercise.id = index
+            exercise.exercise_id = index
 
-        routine.id = greatest_id + 1
+        routine.routine_id = greatest_id + 1
         routines.append(routine)
         self._save(routines)
 
@@ -61,7 +62,7 @@ class RoutineRepository:
     def get_routine_by_id(self, routine_id: int) -> Routine:
         routines = self._load()
         for routine in routines:
-            if routine.id == routine_id:
+            if routine.routine_id == routine_id:
                 return routine
         
         raise ValueError(f"Not found")
@@ -75,7 +76,7 @@ class RoutineRepository:
         routines = self._load()
 
         for index, routine in enumerate(routines):
-            if routine.id == updated_routine.id:
+            if routine.routine_id == updated_routine.routine_id:
                 routines[index] = updated_routine
                 self._save(routines)
                 return updated_routine
@@ -86,7 +87,7 @@ class RoutineRepository:
     def remove_routine(self, routine_id: int) -> Routine:
         routines = self._load()
         for index, routine in enumerate(routines):
-            if routine.id == routine_id:
+            if routine.routine_id == routine_id:
                 deleted_routine = routines.pop(index)
                 self._save(routines)
                 return deleted_routine

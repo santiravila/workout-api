@@ -10,6 +10,7 @@ class RoutineController:
     def create_routine(self, payload: RoutineCreate) -> RoutineRead:
         routine = payload.to_domain()
         saved = self.repo.save_routine(routine)
+
         return RoutineRead.from_domain(saved)
     
     

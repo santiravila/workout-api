@@ -15,16 +15,15 @@ class ExerciseCreate(ExerciseBase):
 
 
 class ExerciseRead(ExerciseBase):
-    id: int
+    exercise_id: int
 
     @classmethod
     def from_domain(cls, exercise: Exercise) -> Self:
-        if exercise.id is None:
-            raise ValueError("Routine must be persisted before mapping")
+        assert exercise.exercise_id is not None, "Routine must be persisted before mapping"
 
         return cls(
             name=exercise.name,
-            id=exercise.id,
+            exercise_id=exercise.exercise_id,
         )
 
 
@@ -49,12 +48,11 @@ class RoutineRead(RoutineBase):
 
     @classmethod
     def from_domain(cls, routine: Routine) -> Self:
-        if routine.id is None:
-            raise ValueError("Routine must be persisted before mapping")
+        assert routine.routine_id is not None, "Routine must be persisted before mapping" 
         
         return cls(
             name=routine.name,
-            id=routine.id,
+            id=routine.routine_id,
             exercises=[ExerciseRead.from_domain(exercise) for exercise in routine.exercises]
         )
 

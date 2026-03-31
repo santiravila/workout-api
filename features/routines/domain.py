@@ -2,14 +2,14 @@ from typing import Self
 
 
 class Exercise:
-    #def __init__(self, name: str, sets: int, weight: float, reps: list[int], id: int | None = None):
-    def __init__(self, name: str, id: int | None = None):
+    #def __init__(self, name: str, sets: int, weight: float, reps: list[int], exercise_id: int | None = None):
+    def __init__(self, name: str, exercise_id: int | None = None):
      
         self.name = name
         #self.sets = sets
         #self.weight = weight
         #self.reps = reps
-        self.id = id if id else None 
+        self.exercise_id = exercise_id if exercise_id else None 
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
@@ -21,15 +21,17 @@ class Exercise:
           #  "sets": self.sets,
           #  "weight": self.weight,
           #  "reps": self.reps,
-            "id": self.id
+            "exercise_id": self.exercise_id
         }
 
 
 class Routine:
-    def __init__(self, name: str, exercises: list[Exercise], id: int | None = None):
+    def __init__(
+        self, name: str, exercises: list[Exercise], routine_id: int | None = None
+    ) -> None:
         self.name = name
         self.exercises = exercises 
-        self.id = id
+        self.routine_id = routine_id
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
@@ -42,5 +44,5 @@ class Routine:
         return {
             "name": self.name,
             "exercises": [exercise.to_dict() for exercise in self.exercises],
-            "id": self.id
+            "routine_id": self.routine_id
         }    
