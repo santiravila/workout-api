@@ -5,12 +5,18 @@ from features.routines.domain import Exercise, Routine
 
 class ExerciseBase(BaseModel):
     name: str
+    reps_per_set: list[int] | None = None
+    weight_per_set: list[float] | None = None
+    duration_per_set: list[int] | None = None
 
 
 class ExerciseCreate(ExerciseBase):
     def to_domain(self) -> Exercise:
         return Exercise(
             name=self.name,
+            reps_per_set=self.reps_per_set,
+            weight_per_set=self.weight_per_set,
+            duration_per_set=self.duration_per_set,
         )
 
 
@@ -24,6 +30,9 @@ class ExerciseRead(ExerciseBase):
         return cls(
             name=exercise.name,
             exercise_id=exercise.exercise_id,
+            reps_per_set=exercise.reps_per_set,
+            weight_per_set=exercise.weight_per_set,
+            duration_per_set=exercise.duration_per_set
         )
 
 

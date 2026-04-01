@@ -1,28 +1,3 @@
 {
-  "sessions": [
-    {
-      "routine_id": 1,
-      "routine_name": "push day",
-      "exercises": [
-        {
-          "name": "pushups",
-          "exercise_id": 1
-        }
-      ],
-      "date": "2026-04-31T11:00:00",
-      "session_id": 1
-    },
-    {
-      "routine_id": 1,
-      "routine_name": "push day",
-      "exercises": [
-        {
-          "name": "dips",
-          "exercise_id": 1
-        }
-      ],
-      "date": "2026-03-31T11:00:00",
-      "session_id": 2
-    }
-  ]
+  "sessions": []
 }

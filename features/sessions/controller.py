@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from features.sessions.repository import SessionRepository
 from features.sessions.schemas import SessionCreate, SessionRead, SessionUpdate
+from features.sessions.domain import DomainValidationError
 
 
 class SessionController:
@@ -8,7 +9,14 @@ class SessionController:
         self.repo = repo
         
     def create_session(self, payload: SessionCreate) -> SessionRead:
-        session = payload.to_domain()
+        try:
+            session = payload.to_domain()
+        except DomainValidationError as e:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail=str(e)
+            )
+
         saved = self.repo.save_session(session)
 
         return SessionRead.from_domain(saved)

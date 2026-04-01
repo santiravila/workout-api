@@ -4,8 +4,11 @@ from features.sessions.domain import Exercise, Session
 
 
 class ExerciseBase(BaseModel):
-    exercise_id: int
     name: str
+    exercise_id: int
+    reps_per_set: list[int] | None = None
+    weight_per_set: list[float] | None = None
+    duration_per_set: list[int] | None = None
 
 
 class ExerciseCreate(ExerciseBase):
@@ -13,16 +16,27 @@ class ExerciseCreate(ExerciseBase):
         return Exercise(
             name=self.name,
             exercise_id=self.exercise_id,
+            reps_per_set=self.reps_per_set,
+            weight_per_set=self.weight_per_set,
+            duration_per_set=self.duration_per_set,
         )
 
 
 class ExerciseRead(ExerciseBase):
+    exercise_id: int
+
     @classmethod
     def from_domain(cls, exercise: Exercise) -> Self:
+        assert exercise.exercise_id is not None, "Routine must be persisted before mapping"
+
         return cls(
             name=exercise.name,
             exercise_id=exercise.exercise_id,
+            reps_per_set=exercise.reps_per_set,
+            weight_per_set=exercise.weight_per_set,
+            duration_per_set=exercise.duration_per_set
         )
+
 
 
 class SessionBase(BaseModel):
