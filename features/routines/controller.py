@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from features.routines.repository import RoutineRepository
 from features.routines.schemas import RoutineCreate, RoutineRead, RoutineUpdate
+from features.routines.domain import DomainValidationError
 
 
 class RoutineController:
@@ -8,7 +9,14 @@ class RoutineController:
         self.repo = repo
         
     def create_routine(self, payload: RoutineCreate) -> RoutineRead:
-        routine = payload.to_domain()
+        try:
+            routine = payload.to_domain()
+        except DomainValidationError as e:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail=str(e)
+            )
+
         saved = self.repo.save_routine(routine)
 
         return RoutineRead.from_domain(saved)
@@ -18,7 +26,10 @@ class RoutineController:
         try:
             routine = self.repo.get_routine_by_id(routine_id)
         except ValueError:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, 
+                detail=f"Not an existing routine of id: {routine_id}"
+            )
 
         return RoutineRead.from_domain(routine)
 
@@ -33,7 +44,10 @@ class RoutineController:
         try:
             routine = self.repo.get_routine_by_id(routine_id)
         except ValueError:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND, 
+                detail=f"Not an existing routine of id: {routine_id}"
+            )
         
         update_data = payload.model_dump(exclude_unset=True)
         for key, value in update_data.items():
@@ -48,4 +62,7 @@ class RoutineController:
         try:
             return RoutineRead.from_domain(self.repo.remove_routine(routine_id))
         except ValueError:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"Not an existing routine of id: {routine_id}")
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND, 
+                detail=f"Not an existing routine of id: {routine_id}"
+            )
