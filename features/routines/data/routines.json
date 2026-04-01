@@ -1,3 +1,27 @@
 {
-  "routines": []
+  "routines": [
+    {
+      "name": "push day",
+      "exercises": [
+        {
+          "name": "pushups",
+          "reps_per_set": [
+            1,
+            2,
+            3
+          ],
+          "weight_per_set": [
+            1.0,
+            2.0,
+            3.0
+          ],
+          "duration_per_set": [
+            0
+          ],
+          "exercise_id": 1
+        }
+      ],
+      "routine_id": 1
+    }
+  ]
 }

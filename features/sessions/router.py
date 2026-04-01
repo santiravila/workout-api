@@ -3,14 +3,16 @@ from fastapi import APIRouter, Depends
 from features.sessions.schemas import SessionCreate, SessionRead, SessionUpdate
 from features.sessions.controller import SessionController
 from features.sessions.repository import SessionRepository
+from features.routines.repository import RoutineRepository
 
 
 router = APIRouter(prefix="/api/v1/sessions", tags=["sessions"])
 
 
 def get_session_controller() -> SessionController:
-    repo = SessionRepository()
-    return SessionController(repo)
+    session_repo = SessionRepository()
+    routine_repo = RoutineRepository()
+    return SessionController(session_repo, routine_repo)
 
 
 ControllerDep = Annotated[SessionController, Depends(get_session_controller)]

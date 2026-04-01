@@ -1,3 +1,25 @@
 {
-  "sessions": []
+  "sessions": [
+    {
+      "routine_id": 1,
+      "routine_name": "fake routine",
+      "exercises": [
+        {
+          "name": "string",
+          "reps_per_set": [
+            0
+          ],
+          "weight_per_set": [
+            0.0
+          ],
+          "duration_per_set": [
+            0
+          ],
+          "exercise_id": 0
+        }
+      ],
+      "date": "2026-04-01T11:00:00",
+      "session_id": 1
+    }
+  ]
 }

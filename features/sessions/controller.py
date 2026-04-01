@@ -1,14 +1,24 @@
 from fastapi import HTTPException, status
 from features.sessions.repository import SessionRepository
+from features.routines.repository import RoutineRepository
 from features.sessions.schemas import SessionCreate, SessionRead, SessionUpdate
 from features.sessions.domain import DomainValidationError
 
 
 class SessionController:
-    def __init__(self, repo: SessionRepository):
-        self.repo = repo
+    def __init__(self, session_repo: SessionRepository, routine_repo: RoutineRepository):
+        self.session_repo = session_repo
+        self.routine_repo = routine_repo
         
     def create_session(self, payload: SessionCreate) -> SessionRead:
+        try:
+            self.routine_repo.get_routine_by_id(payload.routine_id)
+        except ValueError as e:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=str(e)
+            )
+        
         try:
             session = payload.to_domain()
         except DomainValidationError as e:
@@ -17,14 +27,14 @@ class SessionController:
                 detail=str(e)
             )
 
-        saved = self.repo.save_session(session)
+        saved = self.session_repo.save_session(session)
 
         return SessionRead.from_domain(saved)
 
     
     def get_session(self, session_id: int) -> SessionRead:
         try:
-            session = self.repo.get_session_by_id(session_id=session_id)
+            session = self.session_repo.get_session_by_id(session_id=session_id)
         except ValueError:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, 
@@ -35,14 +45,14 @@ class SessionController:
 
      
     def list_sessions_controller(self, routine_id: int | None = None, sort_by_date: bool = False, descending: bool = True) -> list[SessionRead]:
-        sessions = self.repo.list_sessions(routine_id, sort_by_date, descending)
+        sessions = self.session_repo.list_sessions(routine_id, sort_by_date, descending)
         
         return [SessionRead.from_domain(session) for session in sessions]
 
 
     def update_session(self, session_id: int, payload: SessionUpdate) -> SessionRead:
         try:
-            session = self.repo.get_session_by_id(session_id)
+            session = self.session_repo.get_session_by_id(session_id)
         except ValueError:
             raise HTTPException(
                 status.HTTP_404_NOT_FOUND, 
@@ -52,13 +62,13 @@ class SessionController:
         update_data = payload.model_dump(exclude_unset=True)
         
         session.apply_patch(update_data)
-        self.repo.update_session(session)
+        self.session_repo.update_session(session)
 
         return SessionRead.from_domain(session)
     
     def delete_session(self, session_id: int) -> SessionRead:
         try:
-            return SessionRead.from_domain(self.repo.remove_session(session_id))
+            return SessionRead.from_domain(self.session_repo.remove_session(session_id))
         except ValueError:
             raise HTTPException(
                 status.HTTP_404_NOT_FOUND, 
