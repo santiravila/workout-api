@@ -48,8 +48,13 @@ class Exercise:
 
 class Session:
     def __init__(
-        self, routine_id: int, routine_name: str, exercises: list[Exercise], date: str | None = None, session_id: int | None = None
-    ) -> None:
+        self, 
+        routine_id: int, 
+        routine_name: str, 
+        exercises: list[Exercise], 
+        date: str | None = None, 
+        session_id: int | None = None
+    ):
         self.routine_id = routine_id
         self.routine_name = routine_name
         self.exercises = exercises

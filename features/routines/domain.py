@@ -9,10 +9,10 @@ class Exercise:
     def __init__(
             self, 
             name: str, 
+            exercise_id: int | None = None,
             reps_per_set: list[int] | None = None,
             weight_per_set: list[float] | None = None, 
             duration_per_set: list[int] | None = None, 
-            exercise_id: int | None = None
     ):     
         self.name = name
         self.reps_per_set = reps_per_set if reps_per_set else None
