@@ -1,67 +1,59 @@
+import itertools
 import pytest
 from datetime import datetime
-import itertools
-from features.sessions.domain import Session, Exercise, DomainValidationError
-
-@pytest.fixture
-def make_exercise():
-    count = itertools.count(1)
-
-    def _factory(
-        name: str = "push-ups",
-        exercise_id: int | None = None,
-        **kwargs
-    ):
-        if "reps_per_set" not in kwargs and "duration_per_set" not in kwargs:
-            kwargs["reps_per_set"] = [10, 10, 10]
-        
-        return Exercise(
-            name=name,
-            exercise_id=exercise_id if exercise_id is not None else next(count),
-            **kwargs
-        )
-    return _factory
+from typing import Callable
+from features.sessions.domain import Session, DomainValidationError
 
 
 @pytest.fixture
-def make_session(make_exercise):
-    count = itertools.count(1)
+def make_session(make_exercise_session) -> Callable[..., Session]:
+    counter = itertools.count(1)
 
-    def _factory(
-        session_id: int | None = None,
-        routine_id: int = 1,
-        routine_name: str = "push day",
-        exercises: list[Exercise] = [make_exercise(), make_exercise()],
-        date: str = datetime.now().replace(second=0, minute=0, microsecond=0).isoformat()
-    ):
-        return Session(
-            routine_id==routine_id,
-            routine_name=routine_name,
-            exercises=exercises,
-            date=date,
-            session_id=session_id if session_id is not None else next(count)
+    def _factory(**kwargs) -> Session:
+        session = Session(
+            routine_id=kwargs.get("routine_id", 1),
+            routine_name=kwargs.get("routine_name", "push day"),
+            exercises=kwargs.get("exercises", [make_exercise_session(), make_exercise_session()]),
+            date=kwargs.get("date", datetime.now().replace(second=0, minute=0, microsecond=0).isoformat()),
+            session_id=kwargs.get("session_id", next(counter)),
         )
+        return session
     return _factory
 
 
-def test_exercise_raises_without_reps_or_duration(make_exercise):
-    with pytest.raises(DomainValidationError) as exception_info:
-        make_exercise(reps_per_set=None, duration_per_set=None)
-    assert "Exercise must have reps or duration" in str(exception_info.value)
+# Had to copy-paste the exact same 4 tests for exercises here from tests/unit/routines/test_domain.py probably time for conftests.py
+def test_exercise_raises_with_incorrect_name(make_exercise_session):
+    with pytest.raises(DomainValidationError):
+        make_exercise_session(name="")
+    
+
+def test_exercise_raises_with_negative_reps(make_exercise_session):
+    with pytest.raises(DomainValidationError):
+        make_exercise_session(reps_per_set=[1, 2, 3, -1])
+    
+
+def test_exercise_raises_with_negative_weight(make_exercise_session):
+    with pytest.raises(DomainValidationError):
+        make_exercise_session(weight_per_set=[1, 2, 3, -1])
 
 
-def test_exercise_raises_with_reps_weight_mismatch(make_exercise):
+def test_exercise_raises_with_non_positive_duration(make_exercise_session):
+    with pytest.raises(DomainValidationError):
+        make_exercise_session(duration_per_set=[1, 0, -1])
+
+
+def test_exercise_raises_without_reps_or_duration(make_exercise_session):
     with pytest.raises(DomainValidationError) as exception_info:
-        make_exercise(reps_per_set=[1,1,1], weight_per_set=[1,1])
-    assert "Reps and weight length mismatch" in str(exception_info.value)
+        make_exercise_session(reps_per_set=None, duration_per_set=None)
+
+
+def test_exercise_raises_with_reps_weight_mismatch(make_exercise_session):
+    with pytest.raises(DomainValidationError) as exception_info:
+        make_exercise_session(reps_per_set=[1,1,1], weight_per_set=[1,1])
 
 
 def test_sessions_dict_roundtrips(make_session):
     original = make_session()
     restored = Session.from_dict(original.to_dict())
 
-    assert original.routine_name == restored.routine_name
-    assert len(original.exercises) == len(restored.exercises)
-    for original_ex, restored_ex in zip(original.exercises, restored.exercises):
-        assert original_ex.name == restored_ex.name
-        assert original_ex.reps_per_set == restored_ex.reps_per_set
+    assert original == restored

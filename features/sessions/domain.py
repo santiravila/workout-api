@@ -1,9 +1,6 @@
+from features.errors import DomainValidationError
 from datetime import datetime
 from typing import Self
-
-
-class DomainValidationError(Exception):
-    pass
 
 
 class Exercise:
@@ -16,20 +13,44 @@ class Exercise:
             duration_per_set: list[int] | None = None, 
     ):     
         self.name = name
-        self.reps_per_set = reps_per_set if reps_per_set else None
-        self.weight_per_set = weight_per_set if weight_per_set else None
-        self.duration_per_set = duration_per_set if duration_per_set else None
         self.exercise_id = exercise_id 
+        self.reps_per_set = reps_per_set if reps_per_set is not None else None
+        self.weight_per_set = weight_per_set if weight_per_set is not None else None
+        self.duration_per_set = duration_per_set if duration_per_set is not None else None
 
         self.validate()
 
-    def validate(self):
+    def __eq__(self, other: Self) -> bool:
+        if not isinstance(other, Exercise):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def _validate_metrics(self):
         if not any([self.reps_per_set, self.duration_per_set]):
             raise DomainValidationError("Exercise must have reps or duration")
 
         if self.reps_per_set and self.weight_per_set:
             if len(self.reps_per_set) != len(self.weight_per_set):
                 raise DomainValidationError("Reps and weight length mismatch")
+            for rep in self.reps_per_set:
+                if rep < 0:
+                    raise DomainValidationError("Reps cant be negative.")
+            for weight in self.weight_per_set:
+                if weight < 0:
+                    raise DomainValidationError("Weight cant be negative.")
+        
+        if self.duration_per_set:
+            for duration in self.duration_per_set:
+                if duration <= 0:
+                    raise DomainValidationError("Duration has to be greater than zero.")
+                
+    def _validate_name(self):
+        if len(self.name.strip()) < 2:
+            raise DomainValidationError("Exercise name must be at least two characters long.")
+        
+    def validate(self):
+        self._validate_metrics()
+        self._validate_name()
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
@@ -44,7 +65,6 @@ class Exercise:
             "exercise_id": self.exercise_id
         }
 
-    
 
 class Session:
     def __init__(
@@ -60,6 +80,11 @@ class Session:
         self.exercises = exercises
         self.date = date if date else datetime.now().replace(second=0, minute=0, microsecond=0).isoformat()
         self.session_id = session_id if session_id else None
+
+    def __eq__(self, other: Self) -> bool:
+        if not isinstance(other, Session):
+            return False
+        return self.__dict__ == other.__dict__
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
