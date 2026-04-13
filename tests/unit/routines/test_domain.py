@@ -1,75 +1,73 @@
 import itertools
 import pytest
-from features.routines.domain import Routine, Exercise, DomainValidationError
+from typing import Callable
+from features.routines.domain import Routine, DomainValidationError
 
 
 @pytest.fixture
-def make_exercise():
+def make_routine(make_exercise_routine) -> Callable[..., Routine]:
     counter = itertools.count(1)
 
-    def _factory(
-        name: str = "push-ups", 
-        exercise_id: int | None = None, 
-        **kwargs
-    ):
-        if "reps_per_set" not in kwargs and "duration_per_set" not in kwargs:
-            kwargs["reps_per_set"] = [10, 10, 10]
-            
-        return Exercise(
-            name=name, 
-            exercise_id=exercise_id if exercise_id is not None else next(counter), 
-            **kwargs
+    def _factory(**kwargs,) -> Routine:
+        routine = Routine(
+            name=kwargs.get("name", "pull-day"),
+            exercises=kwargs.get("exercises", [make_exercise_routine(), make_exercise_routine()]),
+            routine_id=kwargs.get("routine_id", next(counter))
         )
+        return routine
     return _factory
 
 
-@pytest.fixture
-def make_routine(make_exercise):
-    counter = itertools.count(1)
-
-    def _factory(
-        name: str = "strength",
-        exercises: list[Exercise] = [make_exercise(), make_exercise()],
-        routine_id: int | None = None,
-        **kwargs,
-    ):
-        return Routine(
-            name=name,
-            exercises=exercises,
-            routine_id=routine_id if routine_id is not None else next(counter),
-            **kwargs,
-        )
-    return _factory
-
-
-def test_exercise_raises_without_reps_or_duration(make_exercise):
+def test_exercise_raises_without_reps_or_duration(make_exercise_routine):
     with pytest.raises(DomainValidationError) as exc:
-        make_exercise(reps_per_set=None, duration_per_set=None)
+        make_exercise_routine(reps_per_set=None, duration_per_set=None)
     assert "Exercise must have reps or duration" in str(exc.value)
 
 
-def test_exercise_raises_with_reps_weight_mismatch(make_exercise):
+def test_exercise_raises_with_incorrect_name(make_exercise_routine):
+    with pytest.raises(DomainValidationError):
+        make_exercise_routine(name="")
+    
+
+def test_exercise_raises_with_negative_reps(make_exercise_routine):
+    with pytest.raises(DomainValidationError):
+        make_exercise_routine(reps_per_set=[1, 2, 3, -1])
+    
+
+def test_exercise_raises_with_negative_weight(make_exercise_routine):
+    with pytest.raises(DomainValidationError):
+        make_exercise_routine(weight_per_set=[1, 2, 3, -1])
+
+
+def test_exercise_raises_with_non_positive_duration(make_exercise_routine):
+    with pytest.raises(DomainValidationError):
+        make_exercise_routine(duration_per_set=[1, 0, -1])
+
+
+def test_exercise_raises_with_reps_weight_mismatch(make_exercise_routine):
     with pytest.raises(DomainValidationError) as exc:
-        make_exercise(reps_per_set=[1, 2, 3], weight_per_set=[1.0, 2.0])
+        make_exercise_routine(reps_per_set=[1, 2, 3], weight_per_set=[1.0, 2.0])
     assert "Reps and weight length mismatch" in str(exc.value)
 
 
-def test_routine_contains_all_added_exercises(make_exercise, make_routine):
-    exercises = [make_exercise(), make_exercise()]
+def test_routine_raises_with_incorrect_name(make_routine):
+    with pytest.raises(DomainValidationError):
+        make_routine(name="")
+
+
+def test_routine_raises_with_empty_exercises(make_routine):
+    with pytest.raises(DomainValidationError):
+        make_routine(exercises=[])
+
+
+def test_routine_contains_all_added_exercises(make_exercise_routine, make_routine):
+    exercises = [make_exercise_routine(), make_exercise_routine()]
     routine = make_routine(exercises=exercises)
     assert all(ex in routine.exercises for ex in exercises)
 
 
-# implement Exercise __eq__ for this
-def test_routine_dict_roundtrips(make_exercise, make_routine):
-    original = make_routine(
-        name="strength day",
-        exercises=[make_exercise(reps_per_set=[5, 5, 5], weight_per_set=[100.0, 100.0, 100.0])]
-    )
+def test_routine_dict_roundtrips(make_routine):
+    original = make_routine()
     restored = Routine.from_dict(original.to_dict())
 
-    assert restored.name == original.name
-    assert len(restored.exercises) == len(original.exercises)
-    for original_ex, restored_ex in zip(original.exercises, restored.exercises):
-        assert restored_ex.name == original_ex.name
-        assert restored_ex.reps_per_set == original_ex.reps_per_set
+    assert original == restored
