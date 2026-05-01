@@ -12,8 +12,8 @@ STORAGE_FILE = DATA_DIR / "routines.json"
 
 
 class RoutineRepository:
-    def __init__(self, storage_file=None):
-        self.storage_file = STORAGE_FILE if storage_file is None else storage_file 
+    def __init__(self, storage_file: Path = STORAGE_FILE):
+        self.storage_file = storage_file
 
 
     def _load(self) -> list[Routine]:

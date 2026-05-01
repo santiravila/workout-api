@@ -53,7 +53,7 @@ class RoutineCreate(RoutineBase):
 
 class RoutineRead(RoutineBase):
     exercises: list[ExerciseRead] # override base for accesing from_domain which considers ID
-    id: int 
+    routine_id: int 
 
     @classmethod
     def from_domain(cls, routine: Routine) -> Self:
@@ -61,7 +61,7 @@ class RoutineRead(RoutineBase):
         
         return cls(
             name=routine.name,
-            id=routine.routine_id,
+            routine_id=routine.routine_id,
             exercises=[ExerciseRead.from_domain(exercise) for exercise in routine.exercises]
         )
 

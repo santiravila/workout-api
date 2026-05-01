@@ -9,16 +9,8 @@ class RoutineController:
         self.repo = repo
         
     def create_routine(self, payload: RoutineCreate) -> RoutineRead:
-        try:
-            routine = payload.to_domain()
-        except DomainValidationError as e:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-                detail=str(e)
-            )
-
+        routine = payload.to_domain()
         saved = self.repo.save_routine(routine)
-
         return RoutineRead.from_domain(saved)
     
     
