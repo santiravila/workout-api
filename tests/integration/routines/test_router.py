@@ -1,7 +1,7 @@
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
-from main import app
+from main import create_app
 from features.routines.repository import RoutineRepository
 from features.routines.controller import RoutineController
 from features.routines.router import get_routine_controller
@@ -9,6 +9,7 @@ from features.routines.router import get_routine_controller
 
 @pytest.fixture
 def test_client(tmp_path):
+    app = create_app()
     test_file = tmp_path / "test_repo.json"
 
     def override_controller():

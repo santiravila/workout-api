@@ -81,11 +81,17 @@ class Session:
         self.date = date if date else datetime.now().replace(second=0, minute=0, microsecond=0).isoformat()
         self.session_id = session_id if session_id else None
 
+        self._validate_name()
+
     def __eq__(self, other: Self) -> bool:
         if not isinstance(other, Session):
             return False
         return self.__dict__ == other.__dict__
 
+    def _validate_name(self):
+        if len(self.routine_name.strip()) < 2:
+            raise DomainValidationError("Routine name must be at least two characters long.")
+        
     @classmethod
     def from_dict(cls, data: dict) -> Self:
         data["exercises"] = [

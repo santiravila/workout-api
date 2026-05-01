@@ -12,10 +12,10 @@ class Exercise:
             duration_per_set: list[int] | None = None, 
     ):     
         self.name = name
-        self.exercise_id = exercise_id if exercise_id is not  None else None 
+        self.exercise_id = exercise_id if exercise_id is not None else None 
         self.reps_per_set = reps_per_set if reps_per_set is not None else None
-        self.weight_per_set = weight_per_set if weight_per_set is not None  else None
-        self.duration_per_set = duration_per_set if duration_per_set is not  None else None
+        self.weight_per_set = weight_per_set if weight_per_set is not None else None
+        self.duration_per_set = duration_per_set if duration_per_set is not None else None
 
         self.validate()
 
@@ -38,7 +38,7 @@ class Exercise:
                 if weight < 0:
                     raise DomainValidationError("Weight cant be negative.")
         
-        if self.duration_per_set:
+        if self.duration_per_set is not None:
             for duration in self.duration_per_set:
                 if duration <= 0:
                     raise DomainValidationError("Duration has to be greater than zero.")

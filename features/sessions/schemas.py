@@ -38,7 +38,6 @@ class ExerciseRead(ExerciseBase):
         )
 
 
-
 class SessionBase(BaseModel):
     routine_id: int
     routine_name: str

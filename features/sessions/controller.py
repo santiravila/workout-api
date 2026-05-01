@@ -11,6 +11,7 @@ class SessionController:
         self.routine_repo = routine_repo
         
     def create_session(self, payload: SessionCreate) -> SessionRead:
+        # check whether a routine with payload.routine_id exists
         try:
             self.routine_repo.get_routine_by_id(payload.routine_id)
         except ValueError as e:
@@ -19,14 +20,7 @@ class SessionController:
                 detail=str(e)
             )
         
-        try:
-            session = payload.to_domain()
-        except DomainValidationError as e:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-                detail=str(e)
-            )
-
+        session = payload.to_domain()
         saved = self.session_repo.save_session(session)
 
         return SessionRead.from_domain(saved)
