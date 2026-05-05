@@ -53,53 +53,34 @@ def test_create_routine_success(test_client):
     assert len(body["exercises"]) == len(payload["exercises"])
 
 
-def test_create_fails_domain_validation(test_client):
+def test_create_fails_domain_validation(test_client, make_routine_payload):
     """
     If the payload satisfies the DTO contract, but violates domain invariants.
     """
-    payload = {
-        "name": "a",
-        "exercises":[
-            {
-                "name": "pullups",
-                "reps_per_set":[10, 10, 10]
-            }
-        ]
-    }
-    
+    payload = make_routine_payload(name="a")
+
     response = test_client.post("/api/v1/routines", json=payload)
-    print(response.json())
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json()["detail"] == "Routine name must be at least two characters long."
 
 
-def test_create_fails_validation(test_client):
+def test_create_fails_validation(test_client, make_routine_payload):
     """
     Triggers if the request body does not map with the schema.
     """
 
-    payload = {
-        "name": "a"
-    }
+    payload = make_routine_payload(exercises=None)
     
     response = test_client.post("/api/v1/routines", json=payload)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT    
 
 
-def test_get_routine_by_id_success(test_client):
+def test_get_routine_by_id_success(test_client, make_routine_payload):
     """
     Returns status code 200 if the routine with the specified ID is persisted.
     """
-    payload = {
-        "name": "pull day",
-        "exercises":[
-            {
-                "name": "pullups",
-                "reps_per_set":[10, 10, 10]
-            }
-        ]
-    }
+    payload = make_routine_payload()
 
     post_response = test_client.post("/api/v1/routines", json=payload)
     response_id = post_response.json()["routine_id"]
