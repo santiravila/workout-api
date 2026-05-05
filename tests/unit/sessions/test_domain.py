@@ -43,12 +43,12 @@ def test_exercise_raises_with_non_positive_duration(make_exercise_session):
 
 
 def test_exercise_raises_without_reps_or_duration(make_exercise_session):
-    with pytest.raises(DomainValidationError) as exception_info:
+    with pytest.raises(DomainValidationError):
         make_exercise_session(reps_per_set=None, duration_per_set=None)
 
 
 def test_exercise_raises_with_reps_weight_mismatch(make_exercise_session):
-    with pytest.raises(DomainValidationError) as exception_info:
+    with pytest.raises(DomainValidationError):
         make_exercise_session(reps_per_set=[1,1,1], weight_per_set=[1,1])
 
 

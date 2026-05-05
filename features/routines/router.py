@@ -7,11 +7,14 @@ from features.routines.controller import RoutineController
 
 router = APIRouter(prefix="/api/v1/routines", tags=["routines"])
 
+
 def get_routine_controller() -> RoutineController:
     repo = RoutineRepository()
     return RoutineController(repo=repo)
 
+# consider moving it to a dependencies file and adding it to the APIRouter for all endpoints to share
 ControllerDep = Annotated[RoutineController, Depends(get_routine_controller)]
+
 
 @router.post("/", response_model=RoutineRead)
 def create_routine(

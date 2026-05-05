@@ -14,7 +14,7 @@ def get_session_controller() -> SessionController:
     routine_repo = RoutineRepository()
     return SessionController(session_repo, routine_repo)
 
-
+# consider moving it to a dependencies file and adding it to the APIRouter for all endpoints to share
 ControllerDep = Annotated[SessionController, Depends(get_session_controller)]
 
 
