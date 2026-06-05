@@ -5,9 +5,9 @@ from fastapi.testclient import TestClient
 from features.sessions.repository import SessionRepository
 from features.routines.repository import RoutineRepository
 from features.sessions.controller import SessionController
-from features.routines.controller import RoutineController
+from features.routines.service import RoutineService
 from features.sessions.router import get_session_controller
-from features.routines.router import get_routine_controller
+from features.routines.dependencies import get_routine_service 
 
 
 # send requests to the API through a test client using temporary repository files
@@ -22,12 +22,12 @@ def test_client(tmp_path):
         routine_repo = RoutineRepository(storage_file=routines_test_file)
         return SessionController(session_repo, routine_repo)
 
-    def override_routine_controller():
+    def override_routine_service():
         repo = RoutineRepository(storage_file=routines_test_file)
-        return RoutineController(repo=repo)
+        return RoutineService(repo=repo)
 
     app.dependency_overrides[get_session_controller] = override_session_controller
-    app.dependency_overrides[get_routine_controller] = override_routine_controller
+    app.dependency_overrides[get_routine_service] = override_routine_service
 
     client = TestClient(app)
 

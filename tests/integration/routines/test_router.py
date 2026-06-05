@@ -1,10 +1,10 @@
 import pytest
-from fastapi import status
+from fastapi import status 
 from fastapi.testclient import TestClient
 from main import create_app
 from features.routines.repository import RoutineRepository
-from features.routines.controller import RoutineController
-from features.routines.router import get_routine_controller
+from features.routines.service import RoutineService
+from features.routines.dependencies import get_routine_service
 
 
 @pytest.fixture
@@ -12,11 +12,11 @@ def test_client(tmp_path):
     app = create_app()
     test_file = tmp_path / "test_repo.json"
 
-    def override_controller():
+    def override_service():
         repo = RoutineRepository(storage_file=test_file)
-        return RoutineController(repo=repo)
+        return RoutineService(repo=repo)
 
-    app.dependency_overrides[get_routine_controller] = override_controller
+    app.dependency_overrides[get_routine_service] = override_service
 
     client = TestClient(app)
 
@@ -25,22 +25,13 @@ def test_client(tmp_path):
     app.dependency_overrides.clear()
 
 
-# eventually inject payload from a fixture factory
-def test_create_routine_success(test_client):
+def test_create_routine_success(test_client, make_routine_payload):
     """
     Tests the request body against the pydantic schemas, and roundtrip data integrity.
     200 if boundary validation passes.
     """
 
-    payload = {
-        "name": "pull day",
-        "exercises":[
-            {
-                "name": "pullups",
-                "reps_per_set":[10, 10, 10]
-            }
-        ]
-    }
+    payload = make_routine_payload()
     
     response = test_client.post("/api/v1/routines", json=payload)
     
@@ -85,8 +76,11 @@ def test_get_routine_by_id_success(test_client, make_routine_payload):
     post_response = test_client.post("/api/v1/routines", json=payload)
     response_id = post_response.json()["routine_id"]
 
+    print(post_response.json())
+    print(response_id)
+    
     get_response = test_client.get(f"/api/v1/routines/{response_id}")
-
+    print(get_response.json())
     assert get_response.status_code == status.HTTP_200_OK
 
     body = get_response.json()

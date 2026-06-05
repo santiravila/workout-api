@@ -1,6 +1,6 @@
 import pytest
 from typing import Callable
-from datetime import datetime
+
 
 @pytest.fixture
 def make_routine_payload() -> Callable[..., dict]:
