@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from features.sessions.domain import Session
+from .domain import Session
 
 
 CURRENT_DIR = Path(__file__).parent # which directory I'm I at?

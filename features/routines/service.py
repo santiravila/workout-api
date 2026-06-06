@@ -1,4 +1,4 @@
-from features.routines.repository import RoutineRepository
+from .repository import RoutineRepository
 from .domain import Routine
 
 

@@ -32,7 +32,6 @@ def get_routine(
         )
 
 
-
 @router.get("/", response_model=list[RoutineRead])
 def get_routines(
     service: ServiceDep
