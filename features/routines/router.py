@@ -1,56 +1,76 @@
-from fastapi import APIRouter, Depends
-from typing import Annotated
-from features.routines.schemas import RoutineCreate, RoutineRead, RoutineUpdate
-from features.routines.repository import RoutineRepository
-from features.routines.controller import RoutineController
+from fastapi import APIRouter, HTTPException, status
+from .dependencies import ServiceDep
+from .schemas import RoutineCreate, RoutineRead, RoutineUpdate
 
 
-router = APIRouter(prefix="/api/v1/routines", tags=["routines"])
-
-
-def get_routine_controller() -> RoutineController:
-    repo = RoutineRepository()
-    return RoutineController(repo=repo)
-
-# consider moving it to a dependencies file and adding it to the APIRouter for all endpoints to share
-ControllerDep = Annotated[RoutineController, Depends(get_routine_controller)]
+router = APIRouter(prefix="/api/v1/routines", tags=["routines"],)
 
 
 @router.post("/", response_model=RoutineRead)
 def create_routine(
     payload: RoutineCreate,
-    controller: ControllerDep
+    service: ServiceDep
 ) -> RoutineRead:
-    return controller.create_routine(payload)
+    routine = payload.to_domain()
+    saved_routine = service.create_routine(routine=routine)
+
+    return RoutineRead.from_domain(saved_routine)
 
 
-@router.get("/{id}", response_model=RoutineRead)
+@router.get("/{routine_id}", response_model=RoutineRead)
 def get_routine(
-    id: int,
-    controller: ControllerDep
+    routine_id: int,
+    service: ServiceDep
 ) -> RoutineRead:
-    return controller.get_routine(id)
+    try:
+        routine = service.get_routine(routine_id=routine_id)
+        return RoutineRead.from_domain(routine) 
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f"Not an existing routine of id: {routine_id}"
+        )
 
 
 @router.get("/", response_model=list[RoutineRead])
 def get_routines(
-    controller: ControllerDep
+    service: ServiceDep
 ) -> list[RoutineRead]:
-    return controller.list_routines_controller()
+    routines = service.list_routines()
+    
+    return [RoutineRead.from_domain(routine) for routine in routines]
 
 
-@router.patch("/{id}", response_model=RoutineRead)
+@router.patch("/{routine_id}", response_model=RoutineRead)
 def update_routine(
-    id: int, 
+    routine_id: int, 
     payload: RoutineUpdate,
-    controller: ControllerDep
+    service: ServiceDep
 ) -> RoutineRead:
-    return controller.update_routine(id, payload)
+    update_data = payload.model_dump(exclude_unset=True)
+    try:
+        updated_routine = service.update_routine(routine_id=routine_id, update_data=update_data)
+        return RoutineRead.from_domain(updated_routine)
+    except ValueError:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, 
+            detail=f"Not an existing routine of id: {routine_id}"
+        )
 
 
-@router.delete("/{id}", response_model=RoutineRead)
+
+
+@router.delete("/{routine_id}", response_model=RoutineRead)
 def delete_routine(
-    id: int,
-    controller: ControllerDep
+    routine_id: int,
+    service: ServiceDep
 ) -> RoutineRead:
-    return controller.delete_routine(id)
+    try:
+        removed_routine = service.delete_routine(routine_id=routine_id)  
+        return RoutineRead.from_domain(removed_routine) 
+    except ValueError:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, 
+            detail=f"Not an existing routine of id: {routine_id}"
+        )
+    
