@@ -1,7 +1,7 @@
 # python 3 interpreter as my base image
 FROM python:3.12.3
 
-# filesystem to run commands to to copy files to
+# container filesystem on which to run commands and to copy files to
 WORKDIR /app
 
 # copy requirements before the source code to take advantage of cached builds 

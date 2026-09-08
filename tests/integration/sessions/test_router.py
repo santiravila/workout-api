@@ -10,7 +10,7 @@ from features.sessions.dependencies import get_session_service
 from features.routines.dependencies import get_routine_service 
 
 
-# send requests to the API through a test client using temporary repository files
+# send requests to the API through a test client using temporary repository files (swap por db eventually)
 @pytest.fixture
 def test_client(tmp_path):
     app = create_app() # clean Dependency Graph per testing function

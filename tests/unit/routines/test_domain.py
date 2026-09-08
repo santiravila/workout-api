@@ -8,7 +8,7 @@ from features.routines.domain import Routine, DomainValidationError
 def make_routine(make_exercise_routine) -> Callable[..., Routine]:
     counter = itertools.count(1)
 
-    def _factory(**kwargs,) -> Routine:
+    def _factory(**kwargs) -> Routine:
         routine = Routine(
             name=kwargs.get("name", "pull-day"),
             exercises=kwargs.get("exercises", [make_exercise_routine(), make_exercise_routine()]),

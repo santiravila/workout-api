@@ -58,8 +58,6 @@ def update_routine(
         )
 
 
-
-
 @router.delete("/{routine_id}", response_model=RoutineRead)
 def delete_routine(
     routine_id: int,

@@ -1,10 +1,10 @@
 import pytest
 from fastapi import status 
 from fastapi.testclient import TestClient
-from main import create_app
-from features.routines.repository import RoutineRepository
-from features.routines.service import RoutineService
-from features.routines.dependencies import get_routine_service
+from main import create_app # app factory
+from features.routines.repository import RoutineRepository # service depend on repo
+from features.routines.service import RoutineService # endpoints depend on service
+from features.routines.dependencies import get_routine_service # service dependency
 
 
 @pytest.fixture

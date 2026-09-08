@@ -7,6 +7,7 @@ class Exercise:
             self, 
             name: str, 
             exercise_id: int | None = None,
+            # these are parallel arrays, make into a value object WorkoutSet (hidden entity) dataclass
             reps_per_set: list[int] | None = None,
             weight_per_set: list[float] | None = None, 
             duration_per_set: list[int] | None = None, 
@@ -19,7 +20,7 @@ class Exercise:
 
         self.validate()
 
-    def __eq__(self, other: Self) -> bool:
+    def __eq__(self, other: Self) ->    bool:
         if not isinstance(other, Exercise):
             return False
         return self.__dict__ == other.__dict__
@@ -51,7 +52,7 @@ class Exercise:
         self._validate_metrics()
         self._validate_name()
 
-        
+    # in the future replace with a mapper class of sorts
     @classmethod
     def from_dict(cls, data: dict) -> Self:
         return cls(**data)
@@ -90,6 +91,7 @@ class Routine:
         if self.exercises == []:
             raise DomainValidationError("Routine must have exercises")
 
+    # eventually substitute for a mapper class
     @classmethod
     def from_dict(cls, data: dict) -> Self:
         data["exercises"] = [
